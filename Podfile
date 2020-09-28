@@ -16,6 +16,7 @@ target 'LinkCollector' do
 
   #URLEmbeddedView
   pod 'Kingfisher', '~> 5.0'
+  pod 'RxKingfisher'
   pod 'URLEmbeddedView'
   pod 'MisterFusion'
 

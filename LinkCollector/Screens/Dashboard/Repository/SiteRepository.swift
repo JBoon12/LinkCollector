@@ -25,15 +25,15 @@ class SiteRepository {
     
     static func vaildateURLRx(_ url:URL) -> Observable<Document> {
         return Observable.create { emitter in
-            validateURL(url){ result in
+            validateURL(url, onComplete: { result in
                 switch result{
-                case .success(let doc):
+                case let .success(doc):
                     emitter.onNext(doc)
                     emitter.onCompleted()
-                case .failure(let error):
+                case let .failure(error):
                     emitter.onError(error)
                 }
-            }
+            })
             return Disposables.create()
         }
     }

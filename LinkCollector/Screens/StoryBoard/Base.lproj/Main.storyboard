@@ -193,10 +193,6 @@
                                 <rect key="frame" x="60" y="150" width="294" height="28.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <action selector="editingChanged:" destination="ryl-hb-kn0" eventType="editingChanged" id="Jhf-Zc-iLC"/>
-                                    <action selector="editingDidEnd:" destination="ryl-hb-kn0" eventType="editingDidEnd" id="raq-0p-k0b"/>
-                                </connections>
                             </textField>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oj9-YH-HJw">
                                 <rect key="frame" x="20" y="186.5" width="374" height="60"/>
@@ -207,9 +203,6 @@
                                             <constraint firstAttribute="width" secondItem="Lyi-Dx-xJV" secondAttribute="height" multiplier="1:1" id="Jy1-q0-Tlm"/>
                                         </constraints>
                                         <state key="normal" title="저장"/>
-                                        <connections>
-                                            <action selector="saveLink:" destination="ryl-hb-kn0" eventType="touchUpInside" id="jlu-c8-i3a"/>
-                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>

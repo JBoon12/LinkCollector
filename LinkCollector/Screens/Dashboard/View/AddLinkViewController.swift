@@ -14,6 +14,7 @@ import AVFoundation
 import Kingfisher
 import RxSwift
 import RxCocoa
+import RxKingfisher
 
 class AddLinkViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var tfLink: UITextField!
@@ -27,7 +28,7 @@ class AddLinkViewController: UIViewController, UITextFieldDelegate {
     var inputUrl: URL?
     var activating = BehaviorSubject<Bool>(value: false)
     lazy var needAnimating: Observable<Bool> = self.activating.distinctUntilChanged()
-    let viewModel: AddLinkViewModelType
+    var viewModel: AddLinkViewModelType
     var disposeBag = DisposeBag()
     
     deinit {
@@ -48,6 +49,13 @@ class AddLinkViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        bindData()
+    }
+    
+    private func bindData() {
+        let searchURL = BehaviorSubject<URL?>(value: nil)
+        viewModel.validateURL = searchURL.distinctUntilChanged()
+        
         self.tfLink.delegate = self
         loadingIndicator.isHidden = true
         changeBtnAddTitle(title: "검색")
@@ -66,97 +74,27 @@ class AddLinkViewController: UIViewController, UITextFieldDelegate {
             .bind(to: loadingIndicator.rx.isHidden)
             .disposed(by: disposeBag)
         
-        viewModel.validateURL
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        let myURLString = "https://www.naver.com"
-        if let myURL = URL(string: myURLString){
-            if let myData = try? Data(contentsOf: myURL){
-                let myImage = UIImage(data: myData)
-                self.ivThumbnail.image = myImage
-            }
-        }
-    }
-    
-    @IBAction func editingChanged(_ sender: UITextField) {
-        NSLog("\(sender)")
-    }
-    @IBAction func editingDidEnd(_ sender: UITextField) {
-        NSLog("\(sender)")
-        if let text = sender.text{
-            
-        }
-    }
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            if(textField.isEqual(self.tfLink)){ //titleField에서 리턴키를 눌렀다면
-                self.tfLink.resignFirstResponder()//컨텐츠필드로 포커스 이동
-            }
-            return true
-        }
-    
-
-    
-    
-    @IBAction func saveLink(_ sender: UIButton) {
+        viewModel.imageURL
+            .map{$0}
+            .bind(to: ivThumbnail.kf.rx.image(options: [.transition(.fade(0.2)),
+                                                        .keepCurrentImageWhileLoading,
+                                                        .forceTransition]))
+            .disposed(by: disposeBag)
         
-        if let text = sender.titleLabel?.text {
-            if text == "검색" {
-                updateImageView()
-            }else if text == "저장",
-                let titleString = titleString,
-                let inputUrl = inputUrl{
-                siteModel.siteDistribution(url: inputUrl, position: titleString)
-                self.navigationController?.popViewController(animated: true)
-            }
-        }
+        let btntap = btnAdd.rx.tap
+            .flatMap{Observable.from(optional: self.tfLink.text)}
+            .map{string in URL(string: string)}
+        
+        btntap.bind(to: viewModel.validateInputURL).disposed(by: disposeBag)
     }
-    
-    func updateImageView(){
-        if let linkText = self.tfLink.text,
-            let url = URL(string: linkText){
-            activating.onNext(true)
-            AF.request(url,
-                       method: .get,
-                       parameters: nil)
-                .validate()
-                .responseString{response in
-                    switch response.result {
-                    case .success(let value):
-                        var imageUrl = String()
-                        if let doc: Document = try? SwiftSoup.parse(value) {
-                            for row in try! doc.select("title"){
-                                self.titleString = try? row.text()
-                                break
-                            }
-                            for row in try! doc.select("meta"){
-                                if let property = try? row.attr("property"),
-                                    property == "og:image"{
-                                    imageUrl = try! row.attr("content")
-                                    continue
-                                }else if let itemprop = try? row.attr("itemprop"),
-                                    itemprop == "image" {
-                                    continue
-                                }
-                            }
-                            if !imageUrl.hasPrefix("http"){
-                                imageUrl = "https:\(imageUrl)"
-                            }
-                            self.ivThumbnail.kf.setImage(with: URL(string: imageUrl)!)
-                            self.changeBtnAddTitle(title: "저장")
-                            self.inputUrl = url
-                            self.activating.onNext(false)
-                        }
-                    case .failure(let error):
-                        print("error: \(String(describing: error.errorDescription))")
-                        self.loadingIndicator.stopAnimating()
-                        self.loadingIndicator.isHidden = true
-                    }
-                }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if(textField.isEqual(self.tfLink)){ //titleField에서 리턴키를 눌렀다면
+            self.tfLink.resignFirstResponder()//컨텐츠필드로 포커스 이동
         }
+        return true
     }
-    
+
     private func changeBtnAddTitle(title: String){
         btnAdd.setTitle(title, for: .normal)
         btnAdd.setTitle(title, for: .highlighted)

@@ -8,38 +8,42 @@
 
 import Foundation
 import RxSwift
+import SwiftSoup
 
 protocol AddLinkViewModelType {
     var needAnimating: Observable<Bool> { get }
-    var validateURL: Observable<URL?> { get }
-
+    var validateURL: Observable<URL?> { get set }
+    var imageURL: Observable<URL?> { get }
+    var validateInputURL: AnyObserver<URL?> { get }
 }
 
 class AddLinkViewModel: AddLinkViewModelType {
-    let disposeBag = DisposeBag()
-    let validateURL: Observable<URL?>
-    let needAnimating: Observable<Bool>
+    var validateURL: Observable<URL?>
     
-    let validateInputURL: AnyObserver<Void>
+    let disposeBag = DisposeBag()
+    let needAnimating: Observable<Bool>
+    let imageURL: Observable<URL?>
+    
+    let validateInputURL: AnyObserver<URL?>
 
     init() {
-        let validating = PublishSubject<Void>()
+        let validating = PublishSubject<URL?>()
         let activating = BehaviorSubject<Bool>(value: false)
-        let searchURL = BehaviorSubject<URL?>(value: nil)
-        let validating1 = PublishSubject<Void>()
+
+        let getImageURL = BehaviorSubject<URL?>(value: nil)
         
         needAnimating = activating.distinctUntilChanged()
-        validateURL = searchURL.distinctUntilChanged()
+        imageURL = getImageURL.distinctUntilChanged()
+        validateURL = BehaviorSubject<URL?>(value: nil).distinctUntilChanged()
         
         validateInputURL = validating.asObserver()
         
         validating
-            .flatMap{Observable.from(optional: self.validateURL)}
             .do(onNext: { _ in activating.onNext(true) })
-            .flatMap{$0.map{SiteRepository.vaildateURLRx($0!)}}
-            .map{$0.map{doc in
+            .flatMap{$0.map{self.validateURL($0)}!}
+            .map{doc in
                 var titleString:String?
-                var imageUrl:String?
+                var imageString:String?
                 var strings = [String?]()
                 for row in try! doc.select("title"){
                     titleString = try? row.text()
@@ -48,54 +52,34 @@ class AddLinkViewModel: AddLinkViewModelType {
                 for row in try! doc.select("meta"){
                     if let property = try? row.attr("property"),
                         property == "og:image"{
-                        imageUrl = try! row.attr("content")
+                        imageString = try! row.attr("content")
                         continue
                     }else if let itemprop = try? row.attr("itemprop"),
                         itemprop == "image" {
-                        imageUrl = try? row.attr("content")
+                        imageString = try? row.attr("content")
                         continue
                     }
                 }
-                if let image = imageUrl,
+                if let image = imageString,
                     !image.hasPrefix("http"){
-                    imageUrl = "https:\(imageUrl)"
+                    imageString = "https:\(imageString)"
+                }
+                
+                if let imageString = imageString{
+                    getImageURL.onNext(URL(string: imageString))
                 }
                 
                 
-                
-                }}
-        
-//        validating.withLatestFrom(searchURL)
-//            .flatMap{Observable.from(optional: $0)}
-//            .do(onNext: { _ in activating.onNext(true) })
-//            .flatMap{SiteRepository.vaildateURLRx($0)}
-//            .map{ doc in
-//                var titleString:String?
-//                var imageUrl:String?
-//                var strings = [String?]()
-//                for row in try! doc.select("title"){
-//                    titleString = try? row.text()
-//                    break
-//                }
-//                for row in try! doc.select("meta"){
-//                    if let property = try? row.attr("property"),
-//                        property == "og:image"{
-//                        imageUrl = try! row.attr("content")
-//                        continue
-//                    }else if let itemprop = try? row.attr("itemprop"),
-//                        itemprop == "image" {
-//                        imageUrl = try? row.attr("content")
-//                        continue
-//                    }
-//                }
-//                if let image = imageUrl,
-//                    !image.hasPrefix("http"){
-//                    imageUrl = "https:\(imageUrl)"
-//                }
-//                strings.append(titleString)
-//                strings.append(imageUrl)
-//                return strings
-//        }
-        
+                }
+            .do(onNext: {_ in activating.onNext(false)})
+            .subscribe(onNext: nil)
+            .disposed(by: disposeBag)
+    }
+    
+    func validateURL(_ url: URL) -> Observable<Document> {
+        return SiteRepository.vaildateURLRx(url)
+            .map{ doc in
+                return doc
+            }
     }
 }
