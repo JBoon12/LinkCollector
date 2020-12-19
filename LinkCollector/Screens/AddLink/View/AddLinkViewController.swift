@@ -40,7 +40,6 @@ class AddLinkViewController: UIViewController, UITextFieldDelegate {
             .disposed(by: viewModel.disposeBag)
         
         viewModel.isSaveEnabled
-            .debug()
             .observeOn(MainScheduler.instance)
             .bind(to: btnAdd.rx.isEnabled)
             .disposed(by: viewModel.disposeBag)
@@ -98,7 +97,6 @@ class AddLinkViewController: UIViewController, UITextFieldDelegate {
                 viewModel.link.onNext(value)
             })
             .disposed(by: viewModel.disposeBag)
-        
     }
 
 }

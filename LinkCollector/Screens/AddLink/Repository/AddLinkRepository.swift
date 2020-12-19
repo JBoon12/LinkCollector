@@ -28,7 +28,6 @@ class AddLinkRepository: NSObject {
                             for link in doc.xpath("//meta[@property='og:image']") {
                                 imageLink = link["content"] ?? ""
                             }
-                            
                             if imageLink.count == 0 {
                                 for link in doc.xpath("//link[@rel='shortcut icon']") {
                                     imageLink = link["href"] ?? ""
