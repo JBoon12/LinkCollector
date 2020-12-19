@@ -35,10 +35,6 @@ class DashboardViewController: UIViewController {
         setDatasource()
         tbSiteList.reloadData()
     }
-    @IBAction func goToAddPage(_ sender: UIBarButtonItem) {
-        NSLog("gotoAddPage")
-        self.navigationController?.pushViewController(AddLinkViewController.create(), animated: true)
-    }
     
     func setDelegate() {
         tbSiteList.delegate = self
