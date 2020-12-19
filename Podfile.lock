@@ -1,14 +1,14 @@
 PODS:
-  - Alamofire (5.0.5)
-  - Kingfisher (5.15.4):
-    - Kingfisher/Core (= 5.15.4)
-  - Kingfisher/Core (5.15.4)
-  - MisterFusion (5.0.0)
-  - Realm (4.3.2):
-    - Realm/Headers (= 4.3.2)
-  - Realm/Headers (4.3.2)
-  - RealmSwift (4.3.2):
-    - Realm (= 4.3.2)
+  - Alamofire (5.4.0)
+  - Kanna (5.2.4)
+  - Kingfisher (5.15.8):
+    - Kingfisher/Core (= 5.15.8)
+  - Kingfisher/Core (5.15.8)
+  - Realm (10.5.0):
+    - Realm/Headers (= 10.5.0)
+  - Realm/Headers (10.5.0)
+  - RealmSwift (10.5.0):
+    - Realm (= 10.5.0)
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
@@ -19,47 +19,43 @@ PODS:
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
-  - SwiftSoup (2.3.2)
-  - URLEmbeddedView (0.18.0)
+  - SnapKit (5.0.1)
 
 DEPENDENCIES:
   - Alamofire
+  - Kanna (~> 5.2.2)
   - Kingfisher (~> 5.0)
-  - MisterFusion
   - RealmSwift
   - RxCocoa (~> 5)
   - RxKingfisher
   - RxSwift (~> 5)
-  - SwiftSoup
-  - URLEmbeddedView
+  - SnapKit
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - Kanna
     - Kingfisher
-    - MisterFusion
     - Realm
     - RealmSwift
     - RxCocoa
     - RxKingfisher
     - RxRelay
     - RxSwift
-    - SwiftSoup
-    - URLEmbeddedView
+    - SnapKit
 
 SPEC CHECKSUMS:
-  Alamofire: df2f8f826963b08b9a870791ad48e07a10090b2e
-  Kingfisher: 657dc1077e5bbbfff864194c79f29e35b722d062
-  MisterFusion: 536b0f57d2d4b775e3c9ce436e211ed293c5e01a
-  Realm: 5e92902e2875dff4bb0fd02f67bb737c3d5db2bc
-  RealmSwift: 9a360fc7bae04fc2e308a34fbd899d5faa2d6b22
+  Alamofire: 3b6a534a3df22db367e4dedeeca73d1ddfcf0e2f
+  Kanna: b9d00d7c11428308c7f95e1f1f84b8205f567a8f
+  Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
+  Realm: e1c22c3d83b229afb70ebc10e1771c91e9542d12
+  RealmSwift: 6fc078d9d3fd7e58c71bfdbb694e252462f112a5
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxKingfisher: 0f07678aca3e6a20143dfba67ec2d2c70d443a9a
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
-  SwiftSoup: f97bc4e988c7729d6457f9642f974c617a6e2510
-  URLEmbeddedView: 3fe17ae535d2b8d38c3b08ab8ba0aea5efe5d1cd
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
 
-PODFILE CHECKSUM: bf77a35a2d2ad8c9e9e5d66b4c89ad40af77d0aa
+PODFILE CHECKSUM: 50ccbdad6426a3276f9444f2bb2a15f2b5da308d
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0

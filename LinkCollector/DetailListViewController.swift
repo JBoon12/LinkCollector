@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import URLEmbeddedView
-import MisterFusion
 import RealmSwift
 import SafariServices
 
@@ -39,28 +37,7 @@ class DetailListViewController: UIViewController, UITableViewDelegate, UITableVi
     internal func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tbLinkList.dequeueReusableCell(withIdentifier: "DetailListCell") as! DetailListCell
         
-        cell.vURL.addLayoutSubview(cell.vURLEmbedded, andConstraints:
-            cell.vURLEmbedded.top |+| 8,
-            cell.vURLEmbedded.right |-| 12,
-            cell.vURLEmbedded.left |+| 12,
-            cell.vURLEmbedded.bottom |-| 7.5
-        )
-        
-        let realm = try! Realm()
-        let link = realm.object(ofType: Link.self, forPrimaryKey: strSite)
-        
-        if let link = link {
-            cell.vURLEmbedded.load(urlString: link.myLink[indexPath.row])
-            cell.selectionStyle = .none
-            cell.vURLEmbedded.didTapHandler = { [weak self] embeddedView, URL in
-                guard let URL = URL else { return }
-                if #available(iOS 9.0, *) {
-                    self?.present(SFSafariViewController(url: URL), animated: true, completion: nil)
-                } else {
-                    // Fallback on earlier versions
-                }
-            }
-        }
+
         
         return cell
     }
@@ -90,5 +67,4 @@ class DetailListViewController: UIViewController, UITableViewDelegate, UITableVi
 
 class DetailListCell: UITableViewCell {
     @IBOutlet weak var vURL: UIView!
-    var vURLEmbedded = URLEmbeddedView()
 }
